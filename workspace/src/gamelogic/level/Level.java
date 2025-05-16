@@ -194,10 +194,64 @@ public class Level {
 	
 	
 	//#############################################################################################################
+	//#############################################################################################################
+	//#############################################################################################################
+	//#############################################################################################################
+	//#############################################################################################################
 	//Your code goes here! 
+	//Pre-conditions: col and row are in mounds, map is an existing map, fullness is between 0 and 3
+	//Post-conditions: results in water physics in the requested places
 	//Please make sure you read the rubric/directions carefully and implement the solution recursively!
 	private void water(int col, int row, Map map, int fullness) {
+		//make water (You’ll need modify this to make different kinds of water such as half water and quarter water)
+		if (fullness == 3){
+			Water w = new Water (col, row, tileSize, tileset.getImage("Full_water"), this, fullness);
+			map.addTile(col, row, w);
+		} else if (fullness == 2){
+			Water w = new Water (col, row, tileSize, tileset.getImage("Half_water"), this, fullness);
+			map.addTile(col, row, w);
+		} else if (fullness == 1){
+			Water w = new Water (col, row, tileSize, tileset.getImage("Quarter_water"), this, fullness);
+			map.addTile(col, row, w);
+		} else {
+			Water w = new Water (col, row, tileSize, tileset.getImage("Falling_water"), this, fullness);
+			map.addTile(col, row, w);
+		}
 		
+                       //check if we can go down
+		if(row+1 < map.getTiles()[0].length && !(map.getTiles()[col][row+1] instanceof Water) && !map.getTiles()[col][row+1].isSolid()){
+			if(row+2 < map.getTiles()[0].length && map.getTiles()[col][row+2].isSolid()){
+				water(col, row+1, map, 3);
+			} else {
+				water(col, row+1, map, 0);
+			}
+		} else if (row+1 < map.getTiles()[0].length && !(map.getTiles()[col][row+1] instanceof Water) && map.getTiles()[col][row+1].isSolid()){
+			// right
+			if(col+1 < map.getTiles().length && !(map.getTiles()[col+1][row] instanceof Water) && !map.getTiles()[col+1][row].isSolid()) { 
+				if (fullness > 1){
+					water(col+1, row, map, fullness-1);
+				} else {
+					water(col+1, row, map, fullness);
+				}
+					
+				
+				
+			}
+			//left
+			if(col-1 >= 0 && !(map.getTiles()[col-1][row] instanceof Water) && !map.getTiles()[col-1][row].isSolid()) {
+					if (fullness > 1){
+						water(col-1, row, map, fullness-1);
+					} else {
+						water(col-1, row, map, fullness);
+					}
+					
+				
+			}
+		}
+                       //if we can’t go down go left and right.
+		//right - // checks for going out of bounds and prevents inf loop by checking if there is already water there before going there again, also checking for solid objects
+		
+
 	}
 
 
